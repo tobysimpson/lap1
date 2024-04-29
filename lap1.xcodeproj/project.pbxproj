@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DAF003D12BDFE295000C0C61 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = DAF003D02BDFE295000C0C61 /* main.c */; };
+		DAF003DB2BDFE7DB000C0C61 /* prg.cl in Sources */ = {isa = PBXBuildFile; fileRef = DAF003DA2BDFE7DB000C0C61 /* prg.cl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,10 @@
 /* Begin PBXFileReference section */
 		DAF003CD2BDFE295000C0C61 /* lap1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lap1; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAF003D02BDFE295000C0C61 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		DAF003D82BDFE354000C0C61 /* msh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msh.h; sourceTree = "<group>"; };
+		DAF003D92BDFE6B2000C0C61 /* ocl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ocl.h; sourceTree = "<group>"; };
+		DAF003DA2BDFE7DB000C0C61 /* prg.cl */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.opencl; path = prg.cl; sourceTree = "<group>"; };
+		DAF003DC2BDFF002000C0C61 /* io.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,10 @@
 			isa = PBXGroup;
 			children = (
 				DAF003D02BDFE295000C0C61 /* main.c */,
+				DAF003D82BDFE354000C0C61 /* msh.h */,
+				DAF003D92BDFE6B2000C0C61 /* ocl.h */,
+				DAF003DA2BDFE7DB000C0C61 /* prg.cl */,
+				DAF003DC2BDFF002000C0C61 /* io.h */,
 			);
 			path = lap1;
 			sourceTree = "<group>";
@@ -120,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAF003D12BDFE295000C0C61 /* main.c in Sources */,
+				DAF003DB2BDFE7DB000C0C61 /* prg.cl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
