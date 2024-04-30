@@ -62,8 +62,6 @@ struct ocl_obj
 //init
 void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
 {
-    printf("__FILE__: %s\n", __FILE__);
-    
     /*
      =============================
      environment
@@ -84,17 +82,23 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
      =============================
      */
     
+//    printf("__FILE__: %s\n", __FILE__);
+    
+    //path
+    char prg_root[200];
+    strncpy(prg_root, __FILE__, strlen(__FILE__) - 6);
+//    printf("%s\n", prg_root);
+    
     //name
     char prg_name[200];
-    sprintf(prg_name,"%s/%s", ROOT_PRG, "prg.cl");
-
+    sprintf(prg_name,"%s/%s", prg_root, "prg.cl");
     printf("%s\n",prg_name);
 
     //file
     FILE* src_file = fopen(prg_name, "r");
     if(!src_file)
     {
-        fprintf(stderr, "Failed to load kernel. check ROOT_PRG\n");
+        fprintf(stderr, "program file not found\n");
         exit(1);
     }
 
@@ -157,7 +161,7 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
      */
 
     ocl->vtx_init = clCreateKernel(ocl->program, "vtx_init", &ocl->err);
-//    ocl->vtx_assm = clCreateKernel(ocl->program, "vtx_assm", &ocl->err);
+    ocl->vtx_assm = clCreateKernel(ocl->program, "vtx_assm", &ocl->err);
 
     /*
      =============================
@@ -197,6 +201,11 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
     ocl->err = clSetKernelArg(ocl->vtx_init,  3, sizeof(cl_mem),    (void*)&ocl->A.ii.dev);
     ocl->err = clSetKernelArg(ocl->vtx_init,  4, sizeof(cl_mem),    (void*)&ocl->A.jj.dev);
     ocl->err = clSetKernelArg(ocl->vtx_init,  5, sizeof(cl_mem),    (void*)&ocl->A.vv.dev);
+    
+    ocl->err = clSetKernelArg(ocl->vtx_assm,  0, sizeof(cl_float4), (void*)&msh->dx);
+    ocl->err = clSetKernelArg(ocl->vtx_assm,  1, sizeof(cl_mem),    (void*)&ocl->uu.dev);
+    ocl->err = clSetKernelArg(ocl->vtx_assm,  2, sizeof(cl_mem),    (void*)&ocl->ff.dev);
+    ocl->err = clSetKernelArg(ocl->vtx_assm,  3, sizeof(cl_mem),    (void*)&ocl->A.vv.dev);
 
 }
 

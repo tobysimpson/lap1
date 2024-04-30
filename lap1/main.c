@@ -13,8 +13,7 @@
 #include "io.h"
 
 
-//assembly
-
+//fem assembly test
 int main(int argc, const char * argv[])
 {
     printf("hello\n");
@@ -29,6 +28,7 @@ int main(int argc, const char * argv[])
     
     //init
     ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_init, 3, NULL, msh.nv, NULL, 0, NULL, NULL);
+    ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_assm, 3, NULL, msh.nv, NULL, 0, NULL, NULL);
     
     //read vec
     ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.uu.dev, CL_TRUE, 0, msh.nv_tot*sizeof(float), ocl.uu.hst,  0, NULL, NULL);
