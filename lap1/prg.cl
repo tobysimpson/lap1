@@ -55,16 +55,16 @@ int fn_bnd2(int3 pos, int3 dim)
 }
 
 
-//pos 2x2x2
+//pos2 2x2x2
 int3 fn_pos2(int i)
 {
     return (int3){(i>>0)&1, (i>>1)&1, (i>>2)&1};
 }
 
-//pos 3x3x3
+//pos3 3x3x3
 int3 fn_pos3(int i)
 {
-    return (int3){i%3, i/3, i/9};
+    return (int3){i%3, (i/3)%3, (i/9)%3};
 }
 
 /*
