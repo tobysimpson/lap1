@@ -9,8 +9,6 @@
 #define ocl_h
 
 
-#define ROOT_PRG    "/Users/toby/Documents/USI/postdoc/fracture/xcode/lap1/lap1"
-
 
 struct buf_int
 {
@@ -55,7 +53,6 @@ struct ocl_obj
     //kernels
     cl_kernel vtx_init;
     cl_kernel vtx_assm;
-
 };
 
 
@@ -82,23 +79,11 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
      =============================
      */
     
-//    printf("__FILE__: %s\n", __FILE__);
-    
-    //path
-    char prg_root[200];
-    strncpy(prg_root, __FILE__, strlen(__FILE__) - 6);
-//    printf("%s\n", prg_root);
-    
-    //name
-    char prg_name[200];
-    sprintf(prg_name,"%s/%s", prg_root, "prg.cl");
-    printf("%s\n",prg_name);
-
-    //file
-    FILE* src_file = fopen(prg_name, "r");
+    //src
+    FILE* src_file = fopen("./prg.cl", "r");
     if(!src_file)
     {
-        fprintf(stderr, "program file not found\n");
+        fprintf(stderr, "prg.cl not found\n");
         exit(1);
     }
 
@@ -106,14 +91,12 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
     fseek(src_file, 0, SEEK_END);
     size_t  prg_len =  ftell(src_file);
     rewind(src_file);
-
-//    printf("%lu\n",prg_len);
+//    printf("len %lu\n",prg_len);
 
     //source
     char *prg_src = (char*)malloc(prg_len);
     fread(prg_src, sizeof(char), prg_len, src_file);
     fclose(src_file);
-
 //    printf("%s\n",prg_src);
 
     //create

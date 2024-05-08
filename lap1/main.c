@@ -7,9 +7,11 @@
 
 #include <stdio.h>
 #include <OpenCL/opencl.h>
+#include <Accelerate/Accelerate.h>
 
 #include "msh.h"
 #include "ocl.h"
+#include "slv.h"
 #include "io.h"
 
 
@@ -19,8 +21,11 @@ int main(int argc, const char * argv[])
     printf("hello\n");
     
     //msh
-    struct msh_obj msh;
-    msh_init(&msh);
+    int     ne = 4;
+    int     nv = ne+1;
+    float   dx = 1e0f/(float)ne;
+
+    struct msh_obj msh = {{ne,ne,ne},{nv,nv,nv},ne*ne*ne,nv*nv*nv,dx};
     
     //ocl
     struct ocl_obj ocl;

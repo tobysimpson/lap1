@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DAA439682BEB8AC6000C0A2B /* prg.cl in CopyFiles */ = {isa = PBXBuildFile; fileRef = DAF003DA2BDFE7DB000C0C61 /* prg.cl */; };
 		DAF003D12BDFE295000C0C61 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = DAF003D02BDFE295000C0C61 /* main.c */; };
 		DAF003DB2BDFE7DB000C0C61 /* prg.cl in Sources */ = {isa = PBXBuildFile; fileRef = DAF003DA2BDFE7DB000C0C61 /* prg.cl */; };
 /* End PBXBuildFile section */
@@ -14,16 +15,18 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		DAF003CB2BDFE295000C0C61 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
 			files = (
+				DAA439682BEB8AC6000C0A2B /* prg.cl in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DA4230A32BEB73BA00BE1CAB /* slv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = slv.h; sourceTree = "<group>"; };
 		DAF003CD2BDFE295000C0C61 /* lap1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lap1; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAF003D02BDFE295000C0C61 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		DAF003D82BDFE354000C0C61 /* msh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msh.h; sourceTree = "<group>"; };
@@ -62,11 +65,12 @@
 		DAF003CF2BDFE295000C0C61 /* lap1 */ = {
 			isa = PBXGroup;
 			children = (
-				DAF003D02BDFE295000C0C61 /* main.c */,
 				DAF003D82BDFE354000C0C61 /* msh.h */,
 				DAF003D92BDFE6B2000C0C61 /* ocl.h */,
-				DAF003DA2BDFE7DB000C0C61 /* prg.cl */,
+				DA4230A32BEB73BA00BE1CAB /* slv.h */,
 				DAF003DC2BDFF002000C0C61 /* io.h */,
+				DAF003D02BDFE295000C0C61 /* main.c */,
+				DAF003DA2BDFE7DB000C0C61 /* prg.cl */,
 			);
 			path = lap1;
 			sourceTree = "<group>";
