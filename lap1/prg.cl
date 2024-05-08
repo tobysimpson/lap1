@@ -22,6 +22,7 @@ int     fn_bnd1(int3 pos, int3 dim);
 int     fn_bnd2(int3 pos, int3 dim);
 
 int3    fn_pos2(int i);
+int3    fn_pos3(int i);
 
 void    bas_eval(float3 p, float ee[8]);
 void    bas_grad(float3 p, float3 gg[8], float dx);
@@ -81,6 +82,12 @@ int fn_bnd2(int3 pos, int3 dim)
 int3 fn_pos2(int i)
 {
     return (int3){(i>>0)&1, (i>>1)&1, (i>>2)&1};
+}
+
+//pos3 3x3x3
+int3 fn_pos3(int i)
+{
+    return (int3){i%3, (i/3)%3, (i/9)};
 }
 
 /*
@@ -181,27 +188,21 @@ kernel void vtx_init(const                  float    dx,
     
     
     //adj
-    for(int k=0; k<3; k++)
+    for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
     {
-        for(int j=0; j<3; j++)
-        {
-            for(int i=0; i<3; i++)
-            {
-                int3 vtx2_pos3 = (int3){i,j,k};
-                int3 vtx2_pos1 = vtx1_pos1 + vtx2_pos3 - 1;
-                int  vtx2_idx1 = fn_idx1(vtx2_pos1, vtx_dim);
-                int  vtx2_bnd1 = fn_bnd1(vtx2_pos1, vtx_dim);
-                int  vtx2_idx3 = fn_idx3(vtx2_pos3);
-                
-                //block
-                int blk = 27*vtx1_idx1 + vtx2_idx3;
-                
-                A_ii[blk] = vtx2_bnd1*vtx1_idx1;
-                A_jj[blk] = vtx2_bnd1*vtx2_idx1;
-                A_vv[blk] = 0e0f; //(vtx1_idx1==vtx2_idx1);
-            }
-        }
+        int3 vtx2_pos3 = fn_pos3(vtx2_idx3);
+        int3 vtx2_pos1 = vtx1_pos1 + vtx2_pos3 - 1;
+        int  vtx2_idx1 = fn_idx1(vtx2_pos1, vtx_dim);
+        int  vtx2_bnd1 = fn_bnd1(vtx2_pos1, vtx_dim);
+        
+        //block
+        int blk = 27*vtx1_idx1 + vtx2_idx3;
+        
+        A_ii[blk] = vtx2_bnd1*vtx1_idx1;
+        A_jj[blk] = vtx2_bnd1*vtx2_idx1;
+        A_vv[blk] = 0e0f; //(vtx1_idx1==vtx2_idx1);
     }
+
     
     return;
 }
@@ -277,33 +278,33 @@ kernel void vtx_assm(const                  float    dx,
                     //scalar poisson
                     A_vv[idx1] += dot(bas_gg[vtx2_idx2], bas_gg[vtx1_idx2])*qw;
                     
-                    //                        //dim1
-                    //                        for(int dim1=0; dim1<3; dim1++)
-                    //                        {
-                    //                            //tensor basis
-                    //                            float16 du1 = bas_tens(dim1, bas_gg[vtx1_idx2]);
-                    //
-                    //                            //strain
-                    //                            float8 E1 = mec_E(du1);
-                    //
-                    //                            //dim2
-                    //                            for(int dim2=0; dim2<3; dim2++)
-                    //                            {
-                    //                                //tensor basis
-                    //                                float16 du2 = bas_tens(dim2, bas_gg[vtx2_idx2]);
-                    //
-                    //                                //strain
-                    //                                float8 E2 = mec_E(du2);
-                    //
-                    //                                //stress
-                    //                                float8 S2 = mec_S(E2, mat);
-                    //
-                    //                                //write
-                    //                                A_vv[idx1].arr[dim1][dim2] += sym_tip(S2, E1)*qw;
-                    //
-                    //                            } //dim2
-                    //
-                    //                        } //dim1
+//                        //dim1
+//                        for(int dim1=0; dim1<3; dim1++)
+//                        {
+//                            //tensor basis
+//                            float16 du1 = bas_tens(dim1, bas_gg[vtx1_idx2]);
+//
+//                            //strain
+//                            float8 E1 = mec_E(du1);
+//
+//                            //dim2
+//                            for(int dim2=0; dim2<3; dim2++)
+//                            {
+//                                //tensor basis
+//                                float16 du2 = bas_tens(dim2, bas_gg[vtx2_idx2]);
+//
+//                                //strain
+//                                float8 E2 = mec_E(du2);
+//
+//                                //stress
+//                                float8 S2 = mec_S(E2, mat);
+//
+//                                //write
+//                                A_vv[idx1].arr[dim1][dim2] += sym_tip(S2, E1)*qw;
+//
+//                            } //dim2
+//
+//                        } //dim1
                     
                 } //vtx2
                 
@@ -313,5 +314,40 @@ kernel void vtx_assm(const                  float    dx,
         
     } //ele
     
+    return;
+}
+
+
+
+//zero dirichlet
+kernel void vtx_bc01(global     write_only  float   *uu,
+                     global     write_only  float   *ff,
+                     global     write_only  float   *A_vv)
+{
+    int3 vtx_dim    = {get_global_size(0), get_global_size(1), get_global_size(2)};
+    int3 vtx1_pos1  = {get_global_id(0),   get_global_id(1),   get_global_id(2)};
+    int  vtx1_idx1  = fn_idx1(vtx1_pos1, vtx_dim);
+
+    //edges
+    if(fn_bnd2(vtx1_pos1, vtx_dim))
+    {
+        //vec
+        uu[vtx1_idx1] = 0e0f;
+        ff[vtx1_idx1] = 0e0f;
+        
+        //mtx
+        for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
+        {
+            int3 vtx2_pos3 = fn_pos3(vtx2_idx3);
+            int3 vtx2_pos1 = vtx1_pos1 + vtx2_pos3 - 1;
+            int  vtx2_idx1 = fn_idx1(vtx2_pos1, vtx_dim);
+
+            //block
+            int blk = 27*vtx1_idx1 + vtx2_idx3;
+            
+            A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
+        }
+    } //bc
+
     return;
 }

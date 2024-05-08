@@ -66,7 +66,7 @@ void wrt_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
   
     for(int i=0; i<27*msh->nv_tot; i++)
     {
-        fprintf(fp,"%3d %3d %e\n", ocl->A.ii.hst[i], ocl->A.jj.hst[i], ocl->A.vv.hst[i]);
+        fprintf(fp,"%3d %3d %+e\n", ocl->A.ii.hst[i], ocl->A.jj.hst[i], ocl->A.vv.hst[i]);
     }
     
     //close
