@@ -55,10 +55,10 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
 {
     //store trianglew convert to symmetric afterwards to avoid sums
     SparseAttributes_t atts;
-    atts.kind       = SparseOrdinary;
+//    atts.kind       = SparseOrdinary;
     
-//    atts.kind       = SparseTriangular;
-//    atts.triangle   = SparseUpperTriangle;
+    atts.kind       = SparseTriangular;
+    atts.triangle   = SparseUpperTriangle;
     
     //size of input array
     long    blk_num     = 27*msh->nv_tot;
@@ -71,7 +71,7 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->A.ii.hst, ocl->A.jj.hst, ocl->A.vv.hst);  //duplicates sum
     
     //this is key
-//    A.structure.attributes.kind = SparseSymmetric;
+    A.structure.attributes.kind = SparseSymmetric;
     
 //    fn_print_csr(A);
     
@@ -92,7 +92,7 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
 //    options.atol = 1e-3f;
 //    options.rtol = 1e-3f;
 //    options.variant = SparseVariantGMRES;
-    SparseSolve(SparseGMRES(), A, f, u);
+//    SparseSolve(SparseGMRES(), A, f, u);
 //    
 //    //CG
 //    SparseCGOptions options;
@@ -100,7 +100,7 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
 //    options.atol = 1e-3f;
 //    options.rtol = 1e-3f;
 //    SparseSolve(SparseConjugateGradient(options), A, f, u);
-//    SparseSolve(SparseConjugateGradient(), A, f, u);
+    SparseSolve(SparseConjugateGradient(), A, f, u);
 
 //    //LSMR
 //    SparseSolve(SparseLSMR(), A, f, u); //minres - symmetric

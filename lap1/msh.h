@@ -26,7 +26,7 @@ struct msh_obj
 void msh_init(struct msh_obj *msh)
 {
     //msh
-    int     ne = 16;
+    int     ne = 50;
     int     nv = ne+1;
     float   dx = 1e0f/(float)ne;
     
@@ -43,8 +43,6 @@ void msh_init(struct msh_obj *msh)
     
     msh->dx = dx;
 
-
-    
     printf("%zu %zu %zu\n",msh->ne[0], msh->ne[1], msh->ne[2]);
     printf("%zu %zu %zu\n",msh->nv[0], msh->nv[1], msh->nv[2]);
     printf("%d\n",msh->ne_tot);

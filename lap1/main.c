@@ -61,14 +61,14 @@ int main(int argc, const char * argv[])
 //    wrt_vec(&msh, &ocl);
 //    wrt_mtx(&msh, &ocl);
     
-//    //raw vec
-//    wrt_raw(ocl.uu.hst, msh.nv_tot, sizeof(float), "uu");
-//    wrt_raw(ocl.ff.hst, msh.nv_tot, sizeof(float), "ff");
-//    
-//    //raw mtx
-//    wrt_raw(ocl.A.ii.hst, 27*msh.nv_tot, sizeof(int),   "A_ii");
-//    wrt_raw(ocl.A.jj.hst, 27*msh.nv_tot, sizeof(int),   "A_jj");
-//    wrt_raw(ocl.A.vv.hst, 27*msh.nv_tot, sizeof(float), "A_vv");
+    //raw vec
+    wrt_raw(ocl.uu.hst, msh.nv_tot, sizeof(float), "uu");
+    wrt_raw(ocl.ff.hst, msh.nv_tot, sizeof(float), "ff");
+    
+    //raw mtx
+    wrt_raw(ocl.A.ii.hst, 27*msh.nv_tot, sizeof(int),   "A_ii");
+    wrt_raw(ocl.A.jj.hst, 27*msh.nv_tot, sizeof(int),   "A_jj");
+    wrt_raw(ocl.A.vv.hst, 27*msh.nv_tot, sizeof(float), "A_vv");
     
     //clean
     ocl_final(&msh, &ocl);
