@@ -170,8 +170,10 @@ void bas_grad(float3 p, float3 gg[8], float dx)
 
 //init
 kernel void vtx_init(const                  float    dx,
+                     global     write_only  float4  *xx,
                      global     write_only  float   *uu,
                      global     write_only  float   *ff,
+                     global     write_only  float   *aa,
                      global     write_only  int     *A_ii,
                      global     write_only  int     *A_jj,
                      global     write_only  float   *A_vv)
@@ -182,9 +184,13 @@ kernel void vtx_init(const                  float    dx,
     
     //    printf("%3d %v3d\n", vtx1_idx1, vtx1_pos1);
     
+    float3 x = dx*convert_float3(vtx1_pos1);
+    
     //vec
+    xx[vtx1_idx1] = (float4){x,0e0f};
     uu[vtx1_idx1] = 0e0f; //fn_bnd2(vtx1_pos1, vtx_dim);
     ff[vtx1_idx1] = 0e0f; //vtx1_idx1;
+    aa[vtx1_idx1] = fn_u1(x);
     
     
     //adj
@@ -223,6 +229,8 @@ kernel void vtx_assm(const                  float    dx,
     int3 vtx1_pos1  = {get_global_id(0)  , get_global_id(1),   get_global_id(2)};
     int3 ele_dim    = vtx_dim - 1;
     
+//    printf("vtx1 %v3d\n",vtx1_pos1);
+    
     int vtx1_idx1   = fn_idx1(vtx1_pos1, vtx_dim);
     int vtx1_idx2   = 8;
     
@@ -238,9 +246,12 @@ kernel void vtx_assm(const                  float    dx,
         //decrement
         vtx1_idx2 -= 1;
         
+        
         //in-bounds
         if(ele_bnd1)
         {
+//            printf("ele1 %+v3d\n",ele_pos1);
+            
             //qpt (2pt gauss)
             for(int qpt_idx=0; qpt_idx<8; qpt_idx++)
             {
@@ -249,6 +260,8 @@ kernel void vtx_assm(const                  float    dx,
                 //2pt
                 float3 qp = (float3){qp2[qpt_pos.x], qp2[qpt_pos.y], qp2[qpt_pos.z]};
                 float  qw = qw2[qpt_pos.x]*qw2[qpt_pos.y]*qw2[qpt_pos.z];
+                
+//                printf("%v3d %f %f\n",qpt_pos, qw2[qpt_pos.x]*qw2[qpt_pos.y]*qw2[qpt_pos.z], vlm);
                 
                 //scale
                 qw *= vlm;
@@ -260,9 +273,11 @@ kernel void vtx_assm(const                  float    dx,
                 bas_grad(qp, bas_gg, dx);
                 
                 //qpt global
-                float3 x = dx*convert_float3(vtx1_pos1 + qp);
+                float3 x = dx*(convert_float3(ele_pos1) + qp);
                 
-                //rhs
+//                printf("%v3f\n",x);
+                
+                //rhsx
                 ff[vtx1_idx1] += fn_f1(x)*bas_ee[vtx1_idx2]*qw;
                 
                 //vtx2
