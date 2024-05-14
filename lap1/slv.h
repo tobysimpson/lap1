@@ -9,8 +9,6 @@
 #define slv_h
 
 
-
-
 void fn_print_csr(SparseMatrix_Float A)
 {
     float aa[A.structure.rowCount*A.structure.columnCount];
@@ -41,7 +39,7 @@ void fn_print_csr(SparseMatrix_Float A)
             float a = aa[j*A.structure.columnCount+i];
             
 //            printf("% 3.2f ",a);
-            printf("%s  ",(a>0e0f)?"+":(a<0e0f)?"-":" ");
+            printf("%s",(a>0e0f)?"+":(a<0e0f)?"-":" ");
         }
         printf("\n");
     }
@@ -67,7 +65,7 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     uint8_t blk_sz      = 1;
     
     //create
-    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->A_vv.hst);  //duplicates sum
+    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->M_vv.hst);  //duplicates sum
     
     //this is key
     A.structure.attributes.kind = SparseSymmetric;
@@ -75,12 +73,15 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
 //    fn_print_csr(A);
     
     //vecs
-    DenseVector_Float u = {msh->nv_tot, ocl->uu.hst};
-    DenseVector_Float f = {msh->nv_tot, ocl->ff.hst};
+    DenseVector_Float u = {msh->nv_tot, ocl->aa.hst};
+//    DenseVector_Float f = {msh->nv_tot, ocl->ff.hst};
+    DenseVector_Float a = {msh->nv_tot, ocl->aa.hst};
 
     //solve
-    SparseSolve(SparseConjugateGradient(), A, f, u);
+//    SparseSolve(SparseConjugateGradient(), A, f, u);
 //    SparseSolve(SparseGMRES(), A, f, u);
+    
+    SparseMultiply(A, a, u);
 
     //clean
     SparseCleanup(A);

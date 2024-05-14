@@ -45,7 +45,7 @@ void wrt_vec(struct msh_obj *msh, struct ocl_obj *ocl)
   
     for(int i=0; i<msh->nv_tot; i++)
     {
-        fprintf(fp,"%e %e\n", ocl->uu.hst[i], ocl->ff.hst[i]);
+        fprintf(fp,"% e % e % e\n", ocl->uu.hst[i], ocl->ff.hst[i], ocl->aa.hst[i]);
     }
     
     //close
@@ -154,7 +154,7 @@ void wrt_vtk(struct msh_obj *msh, struct ocl_obj *ocl)
     
     for(int i=0; i<msh->nv_tot; i++)
     {
-        fprintf(file1, "%e\n", ocl->uu.hst[i] - ocl->aa.hst[i]);
+        fprintf(file1, "%e\n", ocl->ff.hst[i] - ocl->aa.hst[i]);
     }
 
     

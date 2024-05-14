@@ -20,13 +20,6 @@ int main(int argc, const char * argv[])
 {
     printf("hello\n");
     
-//    //msh
-//    int     ne = 3;
-//    int     nv = ne+1;
-//    float   dx = 1e0f/(float)ne;
-//
-//    struct msh_obj msh = {{ne,ne,ne},{nv,nv,nv},ne*ne*ne,nv*nv*nv,dx};
-    
     //msh
     struct msh_obj msh;
     msh_init(&msh);
@@ -41,17 +34,17 @@ int main(int argc, const char * argv[])
     ocl.err = clEnqueueNDRangeKernel(ocl.command_queue, ocl.vtx_bc01, 3, NULL, msh.nv, NULL, 0, NULL, NULL);
     
     //read vec
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.xx.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(cl_float4),ocl.xx.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.uu.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),    ocl.uu.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.ff.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),    ocl.ff.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.aa.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),    ocl.aa.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.xx.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(cl_float4),   ocl.xx.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.uu.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),       ocl.uu.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.ff.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),       ocl.ff.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.aa.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),       ocl.aa.hst,  0, NULL, NULL);
 
     //read mtx
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.ii.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.ii.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.jj.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.jj.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.ii.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),        ocl.ii.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.jj.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),        ocl.jj.hst,  0, NULL, NULL);
     
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float), ocl.A_vv.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.M_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float), ocl.M_vv.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float),    ocl.A_vv.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.M_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float),    ocl.M_vv.hst,  0, NULL, NULL);
     
     //solve
     slv_mtx(&msh, &ocl);
@@ -60,20 +53,20 @@ int main(int argc, const char * argv[])
     wrt_vtk(&msh, &ocl);
     
 //    //txt
-//    wrt_vec(&msh, &ocl);
+    wrt_vec(&msh, &ocl);
     wrt_mtx(&msh, &ocl);
     
     //raw vec
-    wrt_raw(ocl.uu.hst, msh.nv_tot, sizeof(float), "uu");
-    wrt_raw(ocl.ff.hst, msh.nv_tot, sizeof(float), "ff");
-    wrt_raw(ocl.aa.hst, msh.nv_tot, sizeof(float), "aa");
+    wrt_raw(ocl.uu.hst,     msh.nv_tot,     sizeof(float), "uu");
+    wrt_raw(ocl.ff.hst,     msh.nv_tot,     sizeof(float), "ff");
+    wrt_raw(ocl.aa.hst,     msh.nv_tot,     sizeof(float), "aa");
     
     //raw mtx
-    wrt_raw(ocl.ii.hst, 27*msh.nv_tot, sizeof(int),   "ii");
-    wrt_raw(ocl.jj.hst, 27*msh.nv_tot, sizeof(int),   "jj");
+    wrt_raw(ocl.ii.hst,     27*msh.nv_tot,  sizeof(int),   "ii");
+    wrt_raw(ocl.jj.hst,     27*msh.nv_tot,  sizeof(int),   "jj");
     
-    wrt_raw(ocl.A_vv.hst, 27*msh.nv_tot, sizeof(float), "A_vv");
-    wrt_raw(ocl.M_vv.hst, 27*msh.nv_tot, sizeof(float), "M_vv");
+    wrt_raw(ocl.A_vv.hst,   27*msh.nv_tot,  sizeof(float), "A_vv");
+    wrt_raw(ocl.M_vv.hst,   27*msh.nv_tot,  sizeof(float), "M_vv");
     
     //clean
     ocl_final(&msh, &ocl);

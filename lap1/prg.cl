@@ -189,9 +189,9 @@ kernel void vtx_init(const                  float    dx,
     
     //vec
     xx[vtx1_idx1] = (float4){x,0e0f};
-    uu[vtx1_idx1] = 0e0f; //fn_bnd2(vtx1_pos1, vtx_dim);
-    ff[vtx1_idx1] = 0e0f; //vtx1_idx1;
-    aa[vtx1_idx1] = fn_u1(x);
+    uu[vtx1_idx1] = 0e0f;
+    ff[vtx1_idx1] = 0e0f;
+    aa[vtx1_idx1] = fn_f1(x);
     
     
     //adj
@@ -281,7 +281,7 @@ kernel void vtx_assm(const                  float    dx,
                 
 //                printf("%v3f\n",x);
                 
-                //rhsx
+                //rhs
                 ff[vtx1_idx1] += fn_f1(x)*bas_ee[vtx1_idx2]*qw;
                 
                 //vtx2
@@ -369,16 +369,15 @@ kernel void vtx_bc01(global     write_only  float   *uu,
             int blk = 27*vtx1_idx1 + vtx2_idx3;
             
             if(fn_bnd2(vtx1_pos1, vtx_dim))
-                {
-                    A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
-                    M_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
-                }
-
+            {
+                A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
+                M_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
+            }
         }
     } //bc
     
     //bools
-    int vtx1_bnd1 = fn_bnd2(vtx1_pos1, vtx_dim);                           //on edge
+    int vtx1_bnd1 = fn_bnd2(vtx1_pos1, vtx_dim);                    //on edge
     
     //vtx2
     for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
@@ -399,13 +398,15 @@ kernel void vtx_bc01(global     write_only  float   *uu,
             ff[vtx1_idx1] = 0e0f;
             
             //row=>I
-            A_vv[blk] = vtx2_bnd1*(vtx1_idx1==vtx2_idx1);   //diag
+            A_vv[blk] = vtx2_bnd1*(vtx1_idx1==vtx2_idx1);           //diag
+            M_vv[blk] = vtx2_bnd1*(vtx1_idx1==vtx2_idx1);
         }
         
         //vtx2 zero cols (xor)
         if((!vtx1_bnd1)&&(vtx2_bnd2))
         {
             A_vv[blk] = 0e0f;
+            M_vv[blk] = 0e0f;
         }
         
     } //vtx2

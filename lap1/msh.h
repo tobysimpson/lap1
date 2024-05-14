@@ -15,8 +15,8 @@ struct msh_obj
     size_t  ne[3];      //ele
     size_t  nv[3];      //vtx
     
-    int  ne_tot;
-    int  nv_tot;
+    int     ne_tot;
+    int     nv_tot;
     
     float   dx;
 };
@@ -26,7 +26,7 @@ struct msh_obj
 void msh_init(struct msh_obj *msh)
 {
     //msh
-    int     ne = 30;
+    int     ne = 100;
     int     nv = ne+1;
     float   dx = 1e0f/(float)ne;
     
