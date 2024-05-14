@@ -22,13 +22,6 @@ struct buf_flt
     cl_mem          dev;
 };
 
-struct buf_coo
-{
-    struct buf_int  ii;
-    struct buf_int  jj;
-    struct buf_flt  vv;
-};
-
 struct buf_flt4
 {
     cl_float4*      hst;

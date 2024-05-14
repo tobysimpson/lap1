@@ -26,7 +26,7 @@ struct msh_obj
 void msh_init(struct msh_obj *msh)
 {
     //msh
-    int     ne = 100;
+    int     ne = 10;
     int     nv = ne+1;
     float   dx = 1e0f/(float)ne;
     
