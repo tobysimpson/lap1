@@ -174,9 +174,10 @@ kernel void vtx_init(const                  float    dx,
                      global     write_only  float   *uu,
                      global     write_only  float   *ff,
                      global     write_only  float   *aa,
-                     global     write_only  int     *A_ii,
-                     global     write_only  int     *A_jj,
-                     global     write_only  float   *A_vv)
+                     global     write_only  int     *ii,
+                     global     write_only  int     *jj,
+                     global     write_only  float   *A_vv,
+                     global     write_only  float   *M_vv)
 {
     int3 vtx_dim    = {get_global_size(0), get_global_size(1), get_global_size(2)};
     int3 vtx1_pos1  = {get_global_id(0)  , get_global_id(1),   get_global_id(2)};
@@ -204,9 +205,11 @@ kernel void vtx_init(const                  float    dx,
         //block
         int blk = 27*vtx1_idx1 + vtx2_idx3;
         
-        A_ii[blk] = vtx2_bnd1*vtx1_idx1;
-        A_jj[blk] = vtx2_bnd1*vtx2_idx1;
+        ii[blk] = vtx2_bnd1*vtx1_idx1;
+        jj[blk] = vtx2_bnd1*vtx2_idx1;
+        
         A_vv[blk] = 0e0f; //(vtx1_idx1==vtx2_idx1);
+        M_vv[blk] = 0e0f;
     }
 
     
@@ -223,7 +226,8 @@ kernel void vtx_init(const                  float    dx,
 kernel void vtx_assm(const                  float    dx,
                      global     read_only   float   *uu,
                      global     write_only  float   *ff,
-                     global     write_only  float   *A_vv)
+                     global     write_only  float   *A_vv,
+                     global     write_only  float   *M_vv)
 {
     int3 vtx_dim    = {get_global_size(0), get_global_size(1), get_global_size(2)};
     int3 vtx1_pos1  = {get_global_id(0)  , get_global_id(1),   get_global_id(2)};
@@ -293,6 +297,9 @@ kernel void vtx_assm(const                  float    dx,
                     //scalar poisson
                     A_vv[idx1] += dot(bas_gg[vtx2_idx2], bas_gg[vtx1_idx2])*qw;
                     
+                    //mass
+                    M_vv[idx1] += bas_ee[vtx2_idx2]*bas_ee[vtx1_idx2]*qw;
+                    
 //                        //dim1
 //                        for(int dim1=0; dim1<3; dim1++)
 //                        {
@@ -337,7 +344,8 @@ kernel void vtx_assm(const                  float    dx,
 //zero dirichlet
 kernel void vtx_bc01(global     write_only  float   *uu,
                      global     write_only  float   *ff,
-                     global     write_only  float   *A_vv)
+                     global     write_only  float   *A_vv,
+                     global     write_only  float   *M_vv)
 {
     int3 vtx_dim    = {get_global_size(0), get_global_size(1), get_global_size(2)};
     int3 vtx1_pos1  = {get_global_id(0),   get_global_id(1),   get_global_id(2)};
@@ -363,6 +371,7 @@ kernel void vtx_bc01(global     write_only  float   *uu,
             if(fn_bnd2(vtx1_pos1, vtx_dim))
                 {
                     A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
+                    M_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
                 }
 
         }
@@ -401,9 +410,5 @@ kernel void vtx_bc01(global     write_only  float   *uu,
         
     } //vtx2
     
-    
-    
-    
-
     return;
 }

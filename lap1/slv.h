@@ -66,9 +66,8 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     int     num_cols    = msh->nv_tot;
     uint8_t blk_sz      = 1;
     
-    
     //create
-    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->A.ii.hst, ocl->A.jj.hst, ocl->A.vv.hst);  //duplicates sum
+    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->A_vv.hst);  //duplicates sum
     
     //this is key
     A.structure.attributes.kind = SparseSymmetric;
@@ -79,48 +78,18 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     DenseVector_Float u = {msh->nv_tot, ocl->uu.hst};
     DenseVector_Float f = {msh->nv_tot, ocl->ff.hst};
 
-    /*
-     ========================
-     solve
-     ========================
-     */
-    
-    //GMRES
-//    SparseGMRESOptions options;
-//    options.maxIterations =  4*msh->nv_tot;
-//    options.nvec = 100;
-//    options.atol = 1e-3f;
-//    options.rtol = 1e-3f;
-//    options.variant = SparseVariantGMRES;
-//    SparseSolve(SparseGMRES(), A, f, u);
-//    
-//    //CG
-//    SparseCGOptions options;
-//    options.maxIterations = msh->nv_tot;
-//    options.atol = 1e-3f;
-//    options.rtol = 1e-3f;
-//    SparseSolve(SparseConjugateGradient(options), A, f, u);
+    //solve
     SparseSolve(SparseConjugateGradient(), A, f, u);
+//    SparseSolve(SparseGMRES(), A, f, u);
 
-//    //LSMR
-//    SparseSolve(SparseLSMR(), A, f, u); //minres - symmetric
-    
-//    //QR
-//    SparseOpaqueFactorization_Float QR = SparseFactor(SparseFactorizationQR, A);       //no
-//    SparseSolve(QR, f , u);
-//    SparseCleanup(QR);
-    
     //clean
     SparseCleanup(A);
-
-    
 
 //    //disp
 //    for(int i=0; i<msh->nv_tot; i++)
 //    {
 //        printf("%e %e %e %e\n", f.data[i], u.data[i], ocl->aa.hst[i], (ocl->uu.hst[i] - ocl->aa.hst[i]));
 //    }
-
 
     return 0;
 }

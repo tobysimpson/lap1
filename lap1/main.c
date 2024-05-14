@@ -47,9 +47,11 @@ int main(int argc, const char * argv[])
     ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.aa.dev,    CL_TRUE, 0, msh.nv_tot*sizeof(float),    ocl.aa.hst,  0, NULL, NULL);
 
     //read mtx
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A.ii.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.A.ii.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A.jj.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.A.jj.hst,  0, NULL, NULL);
-    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A.vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float), ocl.A.vv.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.ii.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.ii.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.jj.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(int),   ocl.jj.hst,  0, NULL, NULL);
+    
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.A_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float), ocl.A_vv.hst,  0, NULL, NULL);
+    ocl.err = clEnqueueReadBuffer(ocl.command_queue, ocl.M_vv.dev,  CL_TRUE, 0, 27*msh.nv_tot*sizeof(float), ocl.M_vv.hst,  0, NULL, NULL);
     
     //solve
     slv_mtx(&msh, &ocl);
@@ -59,16 +61,19 @@ int main(int argc, const char * argv[])
     
 //    //txt
 //    wrt_vec(&msh, &ocl);
-//    wrt_mtx(&msh, &ocl);
+    wrt_mtx(&msh, &ocl);
     
     //raw vec
     wrt_raw(ocl.uu.hst, msh.nv_tot, sizeof(float), "uu");
     wrt_raw(ocl.ff.hst, msh.nv_tot, sizeof(float), "ff");
+    wrt_raw(ocl.aa.hst, msh.nv_tot, sizeof(float), "aa");
     
     //raw mtx
-    wrt_raw(ocl.A.ii.hst, 27*msh.nv_tot, sizeof(int),   "A_ii");
-    wrt_raw(ocl.A.jj.hst, 27*msh.nv_tot, sizeof(int),   "A_jj");
-    wrt_raw(ocl.A.vv.hst, 27*msh.nv_tot, sizeof(float), "A_vv");
+    wrt_raw(ocl.ii.hst, 27*msh.nv_tot, sizeof(int),   "ii");
+    wrt_raw(ocl.jj.hst, 27*msh.nv_tot, sizeof(int),   "jj");
+    
+    wrt_raw(ocl.A_vv.hst, 27*msh.nv_tot, sizeof(float), "A_vv");
+    wrt_raw(ocl.M_vv.hst, 27*msh.nv_tot, sizeof(float), "M_vv");
     
     //clean
     ocl_final(&msh, &ocl);
