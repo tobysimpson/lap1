@@ -8,7 +8,12 @@
 #ifndef ocl_h
 #define ocl_h
 
-
+struct flt3
+{
+    float x;
+    float y;
+    float z;
+};
 
 struct buf_int
 {
@@ -22,9 +27,9 @@ struct buf_flt
     cl_mem          dev;
 };
 
-struct buf_flt4
+struct buf_flt3
 {
-    cl_float4*      hst;
+    struct flt3*    hst;
     cl_mem          dev;
 };
 
@@ -46,7 +51,7 @@ struct ocl_obj
     cl_event            event;  //for profiling
         
     //memory
-    struct buf_flt4     xx;
+    struct buf_flt3     xx;
     struct buf_flt      uu;
     struct buf_flt      ff;
     struct buf_flt      aa;
@@ -167,8 +172,7 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
     //CL_MEM_READ_WRITE/CL_MEM_HOST_READ_ONLY/CL_MEM_HOST_NO_ACCESS / CL_MEM_ALLOC_HOST_PTR
     
     //vec
-    ocl->xx.hst = malloc(msh->nv_tot*sizeof(cl_float4));
-    
+    ocl->xx.hst = malloc(msh->nv_tot*sizeof(struct flt3));
     ocl->uu.hst = malloc(msh->nv_tot*sizeof(float));
     ocl->ff.hst = malloc(msh->nv_tot*sizeof(float));
     ocl->aa.hst = malloc(msh->nv_tot*sizeof(float));
@@ -182,11 +186,10 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
     ocl->M_vv.hst = malloc(27*msh->nv_tot*sizeof(float));
     
     //vec
-    ocl->xx.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(cl_float4), NULL, &ocl->err);
-    
-    ocl->uu.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float), NULL, &ocl->err);
-    ocl->ff.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float), NULL, &ocl->err);
-    ocl->aa.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float), NULL, &ocl->err);
+    ocl->xx.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(struct flt3),  NULL, &ocl->err);
+    ocl->uu.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float),        NULL, &ocl->err);
+    ocl->ff.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float),        NULL, &ocl->err);
+    ocl->aa.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, msh->nv_tot*sizeof(float),        NULL, &ocl->err);
     
     //coo
     ocl->ii.dev = clCreateBuffer(ocl->context, CL_MEM_HOST_READ_ONLY, 27*msh->nv_tot*sizeof(int),   NULL, &ocl->err);
@@ -202,7 +205,7 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
      =============================
      */
 
-    ocl->err = clSetKernelArg(ocl->vtx_init,  0, sizeof(cl_float4), (void*)&msh->dx);
+    ocl->err = clSetKernelArg(ocl->vtx_init,  0, sizeof(float),     (void*)&msh->dx);
     ocl->err = clSetKernelArg(ocl->vtx_init,  1, sizeof(cl_mem),    (void*)&ocl->xx.dev);
     ocl->err = clSetKernelArg(ocl->vtx_init,  2, sizeof(cl_mem),    (void*)&ocl->uu.dev);
     ocl->err = clSetKernelArg(ocl->vtx_init,  3, sizeof(cl_mem),    (void*)&ocl->ff.dev);
@@ -212,7 +215,7 @@ void ocl_init(struct msh_obj *msh, struct ocl_obj *ocl)
     ocl->err = clSetKernelArg(ocl->vtx_init,  7, sizeof(cl_mem),    (void*)&ocl->A_vv.dev);
     ocl->err = clSetKernelArg(ocl->vtx_init,  8, sizeof(cl_mem),    (void*)&ocl->M_vv.dev);
     
-    ocl->err = clSetKernelArg(ocl->vtx_assm,  0, sizeof(cl_float4), (void*)&msh->dx);
+    ocl->err = clSetKernelArg(ocl->vtx_assm,  0, sizeof(float),     (void*)&msh->dx);
     ocl->err = clSetKernelArg(ocl->vtx_assm,  1, sizeof(cl_mem),    (void*)&ocl->uu.dev);
     ocl->err = clSetKernelArg(ocl->vtx_assm,  2, sizeof(cl_mem),    (void*)&ocl->ff.dev);
     ocl->err = clSetKernelArg(ocl->vtx_assm,  3, sizeof(cl_mem),    (void*)&ocl->A_vv.dev);
@@ -238,6 +241,7 @@ void ocl_final(struct msh_obj *msh, struct ocl_obj *ocl)
     ocl->err = clReleaseKernel(ocl->vtx_bc01);
 
     //device
+    ocl->err = clReleaseMemObject(ocl->xx.dev);
     ocl->err = clReleaseMemObject(ocl->uu.dev);
     ocl->err = clReleaseMemObject(ocl->ff.dev);
     ocl->err = clReleaseMemObject(ocl->aa.dev);
@@ -249,6 +253,7 @@ void ocl_final(struct msh_obj *msh, struct ocl_obj *ocl)
     ocl->err = clReleaseMemObject(ocl->M_vv.dev);
     
     //host
+    free(ocl->xx.hst);
     free(ocl->uu.hst);
     free(ocl->ff.hst);
     free(ocl->aa.hst);

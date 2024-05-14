@@ -154,7 +154,7 @@ void wrt_vtk(struct msh_obj *msh, struct ocl_obj *ocl)
     
     for(int i=0; i<msh->nv_tot; i++)
     {
-        fprintf(file1, "%e\n", ocl->ff.hst[i] - ocl->aa.hst[i]);
+        fprintf(file1, "%e\n", ocl->aa.hst[i] - ocl->uu.hst[i]);
     }
 
     

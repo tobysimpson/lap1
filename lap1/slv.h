@@ -75,21 +75,21 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     //create
     SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->A_vv.hst);  //duplicates sum
     
-    //this is key
+    //this is key for CG
     A.structure.attributes.kind = SparseSymmetric;
     
-    fn_print_csr(A);
+//    fn_print_csr(A);
     
     //vecs
-    DenseVector_Float u = {msh->nv_tot, ocl->aa.hst};
-//    DenseVector_Float f = {msh->nv_tot, ocl->ff.hst};
-    DenseVector_Float a = {msh->nv_tot, ocl->aa.hst};
+    DenseVector_Float u = {msh->nv_tot, ocl->uu.hst};
+    DenseVector_Float f = {msh->nv_tot, ocl->ff.hst};
+//    DenseVector_Float a = {msh->nv_tot, ocl->aa.hst};
 
     //solve
-//    SparseSolve(SparseConjugateGradient(), A, f, u);
+    SparseSolve(SparseConjugateGradient(), A, f, u);
 //    SparseSolve(SparseGMRES(), A, f, u);
     
-    SparseMultiply(A, a, u);
+//    SparseMultiply(A, a, u);
 
     //clean
     SparseCleanup(A);
