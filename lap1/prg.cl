@@ -350,66 +350,42 @@ kernel void vtx_bc01(global     write_only  float   *uu,
     int3 vtx_dim    = {get_global_size(0), get_global_size(1), get_global_size(2)};
     int3 vtx1_pos1  = {get_global_id(0),   get_global_id(1),   get_global_id(2)};
     int  vtx1_idx1  = fn_idx1(vtx1_pos1, vtx_dim);
-
-    //edges
-    if(fn_bnd2(vtx1_pos1, vtx_dim))
-    {
-        //vec
-        uu[vtx1_idx1] = 0e0f;
-        ff[vtx1_idx1] = 0e0f;
-        
-        //vtx2
-        for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
-        {
-            int3 vtx2_pos3 = fn_pos3(vtx2_idx3);
-            int3 vtx2_pos1 = vtx1_pos1 + vtx2_pos3 - 1;
-            int  vtx2_idx1 = fn_idx1(vtx2_pos1, vtx_dim);
-
-            //block
-            int blk = 27*vtx1_idx1 + vtx2_idx3;
-            
-            if(fn_bnd2(vtx1_pos1, vtx_dim))
-            {
-                A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
-                M_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
-            }
-        }
-    } //bc
     
     //bools
-    int vtx1_bnd1 = fn_bnd2(vtx1_pos1, vtx_dim);                    //on edge
+    int vtx1_bnd1 = fn_bnd1(vtx1_pos1, vtx_dim);    //in domain
+    int vtx1_bnd2 = fn_bnd2(vtx1_pos1, vtx_dim);    //on edge
     
     //vtx2
     for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
     {
-        int3 vtx2_pos1 = vtx1_pos1 + fn_pos3(vtx2_idx3) - 1;
+        int3 vtx2_pos3 = fn_pos3(vtx2_idx3);
+        int3 vtx2_pos1 = vtx1_pos1 + vtx2_pos3 - 1;
         int  vtx2_idx1 = fn_idx1(vtx2_pos1, vtx_dim);
-        int  vtx2_bnd1 = fn_bnd1(vtx2_pos1, vtx_dim);               //in domain
-        int  vtx2_bnd2 = fn_bnd2(vtx2_pos1, vtx_dim);               //on edge
-        
-        //block idx
+        int  vtx2_bnd1 = fn_bnd1(vtx2_pos1, vtx_dim);
+        int  vtx2_bnd2 = fn_bnd2(vtx2_pos1, vtx_dim);
+
+        //block
         int blk = 27*vtx1_idx1 + vtx2_idx3;
         
-        //vtx1
-        if(vtx1_bnd1)
+        //row to I
+        if((vtx1_bnd2)&&(vtx2_bnd1))
         {
             //vec
             uu[vtx1_idx1] = 0e0f;
             ff[vtx1_idx1] = 0e0f;
             
-            //row=>I
-            A_vv[blk] = vtx2_bnd1*(vtx1_idx1==vtx2_idx1);           //diag
-            M_vv[blk] = vtx2_bnd1*(vtx1_idx1==vtx2_idx1);
+            //mtx
+            A_vv[blk] = (vtx1_idx1==vtx2_idx1); //I
+            M_vv[blk] = (vtx1_idx1==vtx2_idx1);
         }
         
-        //vtx2 zero cols (xor)
-        if((!vtx1_bnd1)&&(vtx2_bnd2))
+        //zero cols
+        if((!vtx1_bnd2)&&(vtx2_bnd2)&&(vtx2_bnd1))
         {
             A_vv[blk] = 0e0f;
             M_vv[blk] = 0e0f;
         }
-        
-    } //vtx2
-    
+    }
+
     return;
 }

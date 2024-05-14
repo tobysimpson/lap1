@@ -38,8 +38,16 @@ void fn_print_csr(SparseMatrix_Float A)
         {
             float a = aa[j*A.structure.columnCount+i];
             
-//            printf("% 3.2f ",a);
-            printf("%s",(a>0e0f)?"+":(a<0e0f)?"-":" ");
+            if(a!=0e0f)
+            {
+                printf("%s",(a>0e0f)?"+":"-");
+//                printf("% 3.2f ",a);
+            }
+            else
+            {
+                printf(" ");
+//                printf("      ");
+            }
         }
         printf("\n");
     }
@@ -65,12 +73,12 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     uint8_t blk_sz      = 1;
     
     //create
-    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->M_vv.hst);  //duplicates sum
+    SparseMatrix_Float A = SparseConvertFromCoordinate(num_rows, num_cols, blk_num, blk_sz, atts, ocl->ii.hst, ocl->jj.hst, ocl->A_vv.hst);  //duplicates sum
     
     //this is key
     A.structure.attributes.kind = SparseSymmetric;
     
-//    fn_print_csr(A);
+    fn_print_csr(A);
     
     //vecs
     DenseVector_Float u = {msh->nv_tot, ocl->aa.hst};
