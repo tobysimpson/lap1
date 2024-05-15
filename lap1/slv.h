@@ -89,7 +89,7 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
     SparseSolve(SparseConjugateGradient(), A, f, u);
 //    SparseSolve(SparseGMRES(), A, f, u);
     
-//    SparseMultiply(A, a, u);
+//    SparseMultiply(A, a, f);    //test mass
 
     //clean
     SparseCleanup(A);

@@ -176,7 +176,7 @@ void bas_grad(float3 p, float3 gg[8], float dx)
  */
 
 //init
-kernel void vtx_init(const  float       dx,
+kernel void vtx_init(const  float        dx,
                      global struct flt3 *xx,
                      global float       *uu,
                      global float       *ff,
@@ -199,7 +199,6 @@ kernel void vtx_init(const  float       dx,
     uu[vtx1_idx1] = 0e0f;
     ff[vtx1_idx1] = 0e0f;
     aa[vtx1_idx1] = fn_u1(x);
-    
     
     //adj
     for(int vtx2_idx3=0; vtx2_idx3<27; vtx2_idx3++)
