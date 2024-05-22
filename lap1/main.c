@@ -55,17 +55,18 @@ int main(int argc, const char * argv[])
 //    wrt_vec(&msh, &ocl);
 //    wrt_mtx(&msh, &ocl);
     
-//    //raw vec
-//    wrt_raw(ocl.uu.hst,     msh.nv_tot,     sizeof(float), "uu");
-//    wrt_raw(ocl.ff.hst,     msh.nv_tot,     sizeof(float), "ff");
-//    wrt_raw(ocl.aa.hst,     msh.nv_tot,     sizeof(float), "aa");
-//    
-//    //raw mtx
-//    wrt_raw(ocl.ii.hst,     27*msh.nv_tot,  sizeof(int),   "ii");
-//    wrt_raw(ocl.jj.hst,     27*msh.nv_tot,  sizeof(int),   "jj");
-//    
-//    wrt_raw(ocl.A_vv.hst,   27*msh.nv_tot,  sizeof(float), "A_vv");
-//    wrt_raw(ocl.M_vv.hst,   27*msh.nv_tot,  sizeof(float), "M_vv");
+    //raw vec
+    wrt_raw(ocl.xx.hst,     msh.nv_tot,     sizeof(struct flt3), "xx");
+    wrt_raw(ocl.uu.hst,     msh.nv_tot,     sizeof(float), "uu");
+    wrt_raw(ocl.ff.hst,     msh.nv_tot,     sizeof(float), "ff");
+    wrt_raw(ocl.aa.hst,     msh.nv_tot,     sizeof(float), "aa");
+    
+    //raw mtx
+    wrt_raw(ocl.ii.hst,     27*msh.nv_tot,  sizeof(int),   "ii");
+    wrt_raw(ocl.jj.hst,     27*msh.nv_tot,  sizeof(int),   "jj");
+    
+    wrt_raw(ocl.A_vv.hst,   27*msh.nv_tot,  sizeof(float), "A_vv");
+    wrt_raw(ocl.M_vv.hst,   27*msh.nv_tot,  sizeof(float), "M_vv");
     
     //clean
     ocl_final(&msh, &ocl);
