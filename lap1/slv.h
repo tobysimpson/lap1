@@ -86,15 +86,16 @@ int slv_mtx(struct msh_obj *msh, struct ocl_obj *ocl)
 //    DenseVector_Float a = {msh->nv_tot, ocl->aa.hst};
 
     //solve
-//    SparseSolve(SparseConjugateGradient(), A, f, u);
+    SparseSolve(SparseConjugateGradient(), A, f, u);
 //    SparseSolve(SparseGMRES(), A, f, u);
 //    SparseMultiply(A, a, f);    //test mass
     
-    SparseOpaqueFactorization_Float LLT = SparseFactor(SparseFactorizationCholesky, A);
-    SparseSolve(LLT, f, u);
+//    SparseOpaqueFactorization_Float LLT = SparseFactor(SparseFactorizationCholesky, A);
+//    SparseSolve(LLT, f, u);
+//    SparseCleanup(LLT);
 
     //clean
-    SparseCleanup(LLT);
+
     SparseCleanup(A);
 
 
